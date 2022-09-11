@@ -55,8 +55,14 @@ class ExchangeController {
 
     static getAllAvalaibleExchange = async (req: Request, res: Response) => {
         try {
-            const datas: IExchange[] | [] = await Exchange.find({isAvalaible: true}, ['-__v']);
-            return res.status(statusCode.success.code).send(datas);
+            const {page, limit} = req.query;
+            const options = {
+                page: page || 1,
+                limit: limit || 10,
+            };
+            
+            const datas: IExchange[] | [] = await (Exchange as any).paginate({isAvalaible: true}, options, ['-__v']);
+            return res.status(statusCode.success.code).send({...datas, status: statusCode.success.code});
         } catch (err: any) {
             return res.status(statusCode.serverError.code)
                         .json({message: err, error: statusCode.serverError.message});

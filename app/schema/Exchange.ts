@@ -1,5 +1,7 @@
 import mongoose, { Schema } from "mongoose";
+import mongoosePaginate from 'mongoose-paginate-v2';
 import { IExchange } from "../interface/IExchange";
+import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js'
 
 const ExchangeSchema: Schema<IExchange> = new Schema({
     ownerName: {
@@ -11,8 +13,9 @@ const ExchangeSchema: Schema<IExchange> = new Schema({
         type: String,
         validate: {
             validator: function(data: any) {
-                if (data.startsWith('+261')) {
-                    return !isNaN(data.split("+")[1]);
+                if (data.startsWith('+')) {
+                    const phoneNumber = parsePhoneNumber(data);
+                    return phoneNumber.isValid();
                 } else {
                     return !isNaN(data);
                 }
@@ -48,5 +51,7 @@ const ExchangeSchema: Schema<IExchange> = new Schema({
         type: Date,
     },
 });
+
+ExchangeSchema.plugin(mongoosePaginate);
 
 export const Exchange = mongoose.model<IExchange>("Exchange", ExchangeSchema);
