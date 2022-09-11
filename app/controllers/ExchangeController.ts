@@ -55,10 +55,10 @@ class ExchangeController {
 
     static getAllAvalaibleExchange = async (req: Request, res: Response) => {
         try {
-            const {page, limit} = req.query;
+            const {page} = req.query;
             const options = {
                 page: page || 1,
-                limit: limit || 10,
+                limit: 10,
             };
             
             const datas: IExchange[] | [] = await (Exchange as any).paginate({isAvalaible: true}, options, ['-__v']);
